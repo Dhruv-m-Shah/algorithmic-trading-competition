@@ -1,0 +1,29 @@
+{
+  "name": "algorithmic-trading-competition",
+  "version": "1.0.0",
+  "description": "Backend for algorithmic-trading-competition platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dhruv-m-Shah/algorithmic-trading-competition.git"
+  },
+  "keywords": [
+    "stocks",
+    "algorithms",
+    "trading",
+    "money",
+    "finance"
+  ],
+  "author": "Dhruv Shah",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Dhruv-m-Shah/algorithmic-trading-competition/issues"
+  },
+  "homepage": "https://github.com/Dhruv-m-Shah/algorithmic-trading-competition#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
