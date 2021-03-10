@@ -1,0 +1,10 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "runCode"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-19lzc7md2al1n"
+s3_prefix = "runCode"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
