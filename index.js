@@ -8,6 +8,9 @@ const session = require('express-session');
 const redis = require("redis");
 const redisClient = redis.createClient();
 const redisStore = require('connect-redis')(session);
+const {executeLambdas} = require('./cron');
+
+executeLambdas();
 
 // Connect to mongodb database
 let client;
