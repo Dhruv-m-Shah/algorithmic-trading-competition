@@ -5,6 +5,10 @@ Resources:
   runCode:
     Type: 'AWS::Serverless::Function'
     Properties:
+      Environment:
+        Variables:
+          DB_NAME: algorithmic_trading
+          DB_PASSWORD: JcC7mim4ORK3fZ5v
       Handler: lambda_function.lambda_handler
       Runtime: python3.8
       CodeUri: ./run_code/
