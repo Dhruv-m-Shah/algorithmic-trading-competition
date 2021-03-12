@@ -41,9 +41,8 @@ class Portfolio:
 
 
 def lambda_handler(event, context):
+    event = json.loads(event)
     code = event["code"]
-    user_id = event["user_id"]
-    submission_id = event["submission_id"]
     cash = event["cash"]
     stocks = event["stocks"]
     error = None

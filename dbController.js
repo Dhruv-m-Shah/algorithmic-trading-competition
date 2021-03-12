@@ -46,4 +46,4 @@ async function getCursor(client){
     }
 }
 
-module.exports = {connect, createUser, getUserByEmail};
+module.exports = {connect, createUser, getUserByEmail, getCursor};
