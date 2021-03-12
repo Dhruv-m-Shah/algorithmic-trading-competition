@@ -6,7 +6,6 @@ class Portfolio:
     def __init__(self, stocks, cash, date):
         self.stocks = stocks
         self.cash = cash
-        self.date = date # today's date
     def buy_stock(self, ticker, amount):
         try:
             stock_ticker = yf.Ticker(ticker)
