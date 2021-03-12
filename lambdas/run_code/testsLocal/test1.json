@@ -1,0 +1,9 @@
+{
+    "user_id": "6045788f8d983a67abd70620",
+    "code": "portfolio.buy_stock('AMZN', 2)",
+    "submission_id": "submission1",
+    "cash": 213123,
+    "stocks": {
+        "AMZN": 2
+    }
+}
