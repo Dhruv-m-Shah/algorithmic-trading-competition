@@ -1,15 +1,15 @@
 import json
 import yfinance as yf
-
+from .db_controller import get_user_stocks
 
 class Portfolio:
-    def __init__(self, stocks, cash, date):
+    def __init__(self, stocks, cash):
         self.stocks = stocks
         self.cash = cash
     def buy_stock(self, ticker, amount):
         try:
             stock_ticker = yf.Ticker(ticker)
-            todays_data = ticker.history(period='1d')
+            todays_data = stock_ticker.history(period='1d')
             price = todays_data["Close"][0]
             if(price*amount > self.cash):
                 return False
@@ -20,6 +20,7 @@ class Portfolio:
                 else:
                     self.stocks[ticker] = amount
         except Exception as e:
+            print(e)
             return False
     def sell_stock(self, ticker, amount):
         try:
@@ -33,16 +34,28 @@ class Portfolio:
                 self.stocks[ticker] -= amount
         except Exception as e:
             return False
-    def get_cash():
+    def get_cash(self):
         return self.cash
-    def get_portfolio():
+    def get_portfolio(self):
         return self.stocks
 
-portfolio = Portfolio()
 
 def lambda_handler(event, context):
     code = event["code"]
     user_id = event["user_id"]
     submission_id = event["submission_id"]
+    cash = event["cash"]
+    stocks = event["stocks"]
+    error = None
+    portfolio = Portfolio(stocks, cash)
+    try:
+        exec(code)
+    except Exception as e:
+        error = e
 
+    return {
+        "stocks": portfolio.get_portfolio(),
+        "cash": portfolio.get_cash(),
+        "error": error
+    }
 

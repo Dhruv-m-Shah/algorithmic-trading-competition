@@ -37,4 +37,13 @@ async function getUserByEmail(client, email){
     }
 }
 
+async function getCursor(client){
+    try {
+        const cursor = client.db("algorithmic_trading").collection("users").find({});
+        return cursor;
+    } catch(e) {
+        return false;
+    }
+}
+
 module.exports = {connect, createUser, getUserByEmail};
