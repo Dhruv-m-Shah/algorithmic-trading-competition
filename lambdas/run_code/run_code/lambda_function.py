@@ -1,6 +1,5 @@
 import json
 import yfinance as yf
-from .db_controller import get_user_stocks
 
 class Portfolio:
     def __init__(self, stocks, cash):

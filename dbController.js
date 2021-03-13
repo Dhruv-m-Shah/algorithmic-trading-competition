@@ -1,4 +1,6 @@
 const { MongoClient } = require('mongodb');
+var ObjectId = require('mongodb').ObjectID;
+const {v4: uuidv4} = require('uuid');
 
 async function connect(){
     /**
@@ -37,13 +39,26 @@ async function getUserByEmail(client, email){
     }
 }
 
+async function createNewSubmission(client, user_id){
+    try{
+        var db = client.db("algorithmic_trading").collection("users");
+        const submissionId = uuidv4();
+        const submissionStr = "submissions." + submissionId;
+        console.log(user_id);
+        await db.updateOne({"_id": ObjectId(user_id)}, {$set: {[submissionStr]: {"cash": 10000, "stocks":{}, "code": ""}}});
+        return submissionId
+    } catch(e) {
+        console.log(e)
+    }
+}
+
 async function getCursor(client){
     try {
         const cursor = client.db("algorithmic_trading").collection("users").find({});
         return cursor;
     } catch(e) {
         return false;
-    }
+    }  
 }
 
-module.exports = {connect, createUser, getUserByEmail, getCursor};
+module.exports = {connect, createUser, getUserByEmail, getCursor, createNewSubmission};

@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const bcrypt = require('bcrypt');
-const {connect, createUser, getUserByEmail} = require('./dbController');
+const {connect, createUser, getUserByEmail, createNewSubmission} = require('./dbController');
 const bodyParser = require('body-parser');
 const cors = require("cors");
 const session = require('express-session');
@@ -37,9 +37,9 @@ app.use(session({
   cookie: {
     secure: false,
     httpOnly: true,
-    maxAge: 1000*10 // 10 seconds
+    maxAge: 1000*60*60 // 1 hour
   },
-  store: new redisStore({host: 'localhost', port:6379, client: redisClient, ttl: 10}) // 10 seconds
+  store: new redisStore({host: 'localhost', port:6379, client: redisClient, ttl: 60*60}) // 10 seconds
 }));
 
 // Initialize the app.
@@ -78,8 +78,10 @@ app.post('/login', async function async (req, res) {
       return;
     }
     const sess = req.session;
-    const email = req.body;
+    const email = req.body.email;
     sess.email = email;
+    console.log(user._id);
+    sess.id = user._id;
     res.status(200).json({
       "message": "logged in"
     });
@@ -91,7 +93,7 @@ app.post('/login', async function async (req, res) {
 });
 
 app.use((req, res, next) => {
-  if(!req.session || req.session.email){
+  if(!req.session || !req.session._id){
     res.status(404).json({
       "message": "loggin first."
     });
@@ -101,3 +103,17 @@ app.use((req, res, next) => {
 });
 
 // All routes after this will be executed only if user is logged in.
+
+app.post('/newSubmission', async function async (req, res) {
+  try{
+    console.log(req.session.email);
+    const submissionId = await createNewSubmission(client, req.session._id);
+    console.log(submissionId);
+    res.status(200).json({
+      "message": "created new submission",
+      "submissionId": submissionId
+    })
+  } catch(e) {
+
+  }
+});
