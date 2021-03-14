@@ -93,7 +93,8 @@ app.post('/login', async function async (req, res) {
 });
 
 app.use((req, res, next) => {
-  if(!req.session || !req.session._id){
+  console.log(req.session.email)
+  if(!req.session || !req.session.id){
     res.status(404).json({
       "message": "loggin first."
     });
@@ -107,7 +108,7 @@ app.use((req, res, next) => {
 app.post('/newSubmission', async function async (req, res) {
   try{
     console.log(req.session.email);
-    const submissionId = await createNewSubmission(client, req.session._id);
+    const submissionId = await createNewSubmission(client, req.session.id);
     console.log(submissionId);
     res.status(200).json({
       "message": "created new submission",
