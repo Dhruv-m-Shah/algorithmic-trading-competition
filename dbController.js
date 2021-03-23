@@ -61,4 +61,15 @@ async function getCursor(client){
     }  
 }
 
-module.exports = {connect, createUser, getUserByEmail, getCursor, createNewSubmission};
+async function getSubmissions(client, email){
+    try {
+        var db = client.db("algorithmic_trading").collection("users");
+        let submissions = await db.findOne({email: email}, {projection: {"submissions": 1}});
+        return submissions;
+    } catch(e) {
+        console.log(e)
+        throw "could not find"
+    }
+    
+}
+module.exports = {connect, createUser, getUserByEmail, getCursor, createNewSubmission, getSubmissions};
