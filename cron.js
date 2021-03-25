@@ -1,10 +1,32 @@
-const cron = require('node-cron');
-var AWS = require('aws-sdk');
-const {connect, getCursor} = require('./dbController');
-AWS.config.region = 'us-east-1';
+const cron = require("node-cron");
+var AWS = require("aws-sdk");
+const { connect, getCursor } = require("./dbController");
+AWS.config.region = "us-east-1";
 var lambda = new AWS.Lambda();
+
+function updateStandardStock() {
+  payload = {
+    updateStandardStock: true,
+  };
+
+  // TODO: figure out if I should get rid of RequestReponse.
+  var params = {
+    FunctionName: "run-code",
+    Payload: JSON.stringify(payload),
+    InvocationType: "RequestResponse",
+  };
+  lambda.invoke(params, function (err, data) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log(data.Payload);
+    }
+  });
+}
+
 function executeLambdas(){ 
-    cron.schedule('02 02 * * *', async () => { // Run cron job everyday at 4:30 EST.
+    cron.schedule('00 49 01 * * *', async () => { // Run cron job everyday at 4:30 EST.
+    updateStandardStock();
     client = await connect();
     const cursor = await getCursor(client);
     await cursor.forEach(async (doc) => {
@@ -37,4 +59,4 @@ function executeLambdas(){
     });
 }
 
-module.exports = {executeLambdas};
+module.exports = { executeLambdas };

@@ -40,7 +40,20 @@ class Portfolio:
 
 
 def lambda_handler(event, context):
-    event = json.loads(event)
+    # Return last 100 closing prices for s&p500
+    if("updateStandardStock" in event):
+        # ^GSPC is the ticker name for S&P500
+        stock_ticker = yf.Ticker("^GSPC")
+        # a pandas dataframe is returned
+        data = stock_ticker.history(period='100d')
+        ret = []
+        for i in range(len(data)):
+            ret.append((str(data.index[i]), data["Close"][i]))
+        return {
+            'statusCode': 200,
+            'standardAndPoors100d': ret
+        }
+
     code = event["code"]
     cash = event["cash"]
     stocks = event["stocks"]

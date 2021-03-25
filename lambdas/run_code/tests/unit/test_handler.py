@@ -9,3 +9,9 @@ def test_lambda_handler():
         d = json.load(f)
     ret = lambda_function.lambda_handler(d, None)
     print(ret)
+
+def test_lambda_update_standard_stock():
+    with open('testsLocal/test2.json') as f:
+        d = json.load(f)
+    ret = lambda_function.lambda_handler(d, None)
+    print(ret)

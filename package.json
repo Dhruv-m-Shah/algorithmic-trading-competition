@@ -35,7 +35,7 @@
     "express-session": "^1.17.1",
     "google-auth-library": "^7.0.2",
     "mongodb": "^3.6.4",
-    "node-cron": "^2.0.3",
+    "node-cron": "^3.0.0",
     "redis": "^3.0.2",
     "uuid": "^3.3.2"
   },
