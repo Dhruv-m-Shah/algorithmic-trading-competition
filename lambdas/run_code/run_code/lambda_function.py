@@ -48,7 +48,10 @@ def lambda_handler(event, context):
         data = stock_ticker.history(period='100d')
         ret = []
         for i in range(len(data)):
-            ret.append((str(data.index[i]), data["Close"][i]))
+            d = {}
+            d['date'] = str(data.index[i])
+            d['close'] = data["Close"][i]
+            ret.append(d)
         return {
             'statusCode': 200,
             'standardAndPoors100d': ret

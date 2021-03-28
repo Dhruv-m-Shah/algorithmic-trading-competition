@@ -7,6 +7,7 @@ const {
   getUserByEmail,
   createNewSubmission,
   getSubmissions,
+  getStandardAndPoors
 } = require("./dbController");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -15,13 +16,12 @@ const redis = require("redis");
 const redisClient = redis.createClient();
 const redisStore = require("connect-redis")(session);
 const { executeLambdas } = require("./cron");
-executeLambdas();
-
 // Connect to mongodb database
 let client;
 
 async function getClient() {
   client = await connect();
+  executeLambdas(client);
 }
 getClient();
 
@@ -156,5 +156,14 @@ app.get("/getSubmissions", async function (req, res) {
 
 // returns last 100 submissions in the s&p 500 index.
 app.get("/standardAndPoors500", async function (req, res) {
-
+  try{
+    sAndPData = await getStandardAndPoors(client);
+    console.log(sAndPData);
+    res.status(200).json({
+      sAndPData: sAndPData,
+      message: "got standard and poors data"
+    });
+  } catch (e) {
+    console.log(e);
+  }
 });
