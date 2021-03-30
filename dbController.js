@@ -53,7 +53,18 @@ async function createNewSubmission(client, email, name) {
     const submissionStr = "submissions." + submissionId;
     await db.updateOne(
       { email: email },
-      { $set: { [submissionStr]: { cash: 10000, stocks: {}, code: "", transactionHistory: [], name: name, portfolioValue: []}}}
+      {
+        $set: {
+          [submissionStr]: {
+            cash: 10000,
+            stocks: {},
+            code: "",
+            transactionHistory: [],
+            name: name,
+            portfolioValue: [],
+          },
+        },
+      }
     );
     return submissionId;
   } catch (e) {
@@ -88,16 +99,14 @@ async function getSubmissions(client, email) {
 }
 
 async function getStandardAndPoors(client) {
-    try {
-        var db = client.db("algorithmic_trading").collection("users");
-        let sAndP = await db.findOne(
-            { _id: ObjectId("605c0f15218169964428744b") }
-        );
-        return sAndP["standardAndPoors"];
-    } catch (e) { 
-        console.log(e);
-        throw Error("Could not get standardAndPoors data");
-    }
+  try {
+    var db = client.db("algorithmic_trading").collection("users");
+    let sAndP = await db.findOne({ _id: ObjectId("605c0f15218169964428744b") });
+    return sAndP["standardAndPoors"];
+  } catch (e) {
+    console.log(e);
+    throw Error("Could not get standardAndPoors data");
+  }
 }
 
 async function setStandardAndPoors(client, value) {
@@ -113,6 +122,33 @@ async function setStandardAndPoors(client, value) {
   }
 }
 
+async function saveCode(client, email, code, submissionId) {
+  try {
+    let codeString = `submissions.${submissionId}.code`
+    var db = client.db("algorithmic_trading").collection("users");
+    await db.updateOne(
+      { email: email },
+      { $set: { [codeString]: code } }
+    );
+  } catch (e) {
+      console.log(e);
+  }
+}
+
+async function saveSubmission(client, email, code, submissionName, submissionId) {
+    try {
+        let codeString = `submissions.${submissionId}.code`
+        let nameString = `submissions.${submissionId}.name`
+        var db = client.db("algorithmic_trading").collection("users");
+        await db.updateOne(
+          { email: email },
+          { $set: { [codeString]: code, [nameString]:  submissionName} }
+        );
+      } catch (e) {
+          console.log(e);
+      }
+}
+
 module.exports = {
   connect,
   createUser,
@@ -121,5 +157,7 @@ module.exports = {
   createNewSubmission,
   getSubmissions,
   setStandardAndPoors,
-  getStandardAndPoors
+  getStandardAndPoors,
+  saveCode,
+  saveSubmission
 };

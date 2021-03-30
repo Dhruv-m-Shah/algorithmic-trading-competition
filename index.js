@@ -7,7 +7,9 @@ const {
   getUserByEmail,
   createNewSubmission,
   getSubmissions,
-  getStandardAndPoors
+  getStandardAndPoors,
+  saveCode,
+  saveSubmission
 } = require("./dbController");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -158,7 +160,6 @@ app.get("/getSubmissions", async function (req, res) {
 app.get("/standardAndPoors500", async function (req, res) {
   try{
     sAndPData = await getStandardAndPoors(client);
-    console.log(sAndPData);
     res.status(200).json({
       sAndPData: sAndPData,
       message: "got standard and poors data"
@@ -171,13 +172,43 @@ app.get("/standardAndPoors500", async function (req, res) {
 // Creates a new user submission
 app.post("/createNewSubmission", async function(req, res) {
   try{
-    let newSubmissionRes = await createNewSubmission(client, req.session.email, req.body.name);
+    let submissionId = await createNewSubmission(client, req.session.email, req.body.name);
     res.status(200).json({
-      message: "successfully created new submission"
+      message: "successfully created new submission",
+      submissionId: submissionId
     });
   } catch (e) {
-    res.status(400).json({
+    res.status(500).json({
       message: "could not create new submission"
     });
   }
 });
+
+// Saved user code
+app.post("/saveCode", async function(req, res) {
+  try{
+    await saveCode(client, req.session.email, req.body.code, req.body.submissionId);
+    res.status(200).json({
+      message: "successfully saved code"
+    });
+  } catch (e) {
+    res.status(500).json({
+      message: "could not save code"
+    });
+  }
+});
+
+app.post("/save", async function(req, res) {
+  try{
+    await saveSubmission(client, req.session.email, req.body.code, req.body.submissionName, req.body.submissionId);
+    res.status(200).json({
+      message: "successfully saved submission"
+    });
+  } catch(e) {
+    res.status(500).json({
+      message: "could not save submission"
+    })
+
+  }
+})
+
