@@ -167,3 +167,17 @@ app.get("/standardAndPoors500", async function (req, res) {
     console.log(e);
   }
 });
+
+// Creates a new user submission
+app.post("/createNewSubmission", async function(req, res) {
+  try{
+    let newSubmissionRes = await createNewSubmission(client, req.session.email, req.body.name);
+    res.status(200).json({
+      message: "successfully created new submission"
+    });
+  } catch (e) {
+    res.status(400).json({
+      message: "could not create new submission"
+    });
+  }
+});

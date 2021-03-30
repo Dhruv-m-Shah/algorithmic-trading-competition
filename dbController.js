@@ -46,15 +46,14 @@ async function getUserByEmail(client, email) {
   }
 }
 
-async function createNewSubmission(client, user_id) {
+async function createNewSubmission(client, email, name) {
   try {
     var db = client.db("algorithmic_trading").collection("users");
     const submissionId = uuidv4();
     const submissionStr = "submissions." + submissionId;
-    console.log(user_id);
     await db.updateOne(
-      { _id: ObjectId(user_id) },
-      { $set: { [submissionStr]: { cash: 10000, stocks: {}, code: "" } } }
+      { email: email },
+      { $set: { [submissionStr]: { cash: 10000, stocks: {}, code: "", transactionHistory: [], name: name, portfolioValue: []}}}
     );
     return submissionId;
   } catch (e) {
