@@ -1,5 +1,11 @@
 import json
 import yfinance as yf
+from dotenv import load_dotenv
+load_dotenv()
+
+
+from .requests import store_new_info
+
 
 class Portfolio:
     def __init__(self, stocks, cash):
@@ -60,12 +66,16 @@ def lambda_handler(event, context):
     code = event["code"]
     cash = event["cash"]
     stocks = event["stocks"]
+    user_id = event["user_id"]
+    submission_id = event["submission_id"]
     error = None
     portfolio = Portfolio(stocks, cash)
     try:
         exec(code)
     except Exception as e:
         error = e
+    
+    store_new_info(user_id, submission_id, portfolio.get_portfolio(), portfolio.get_cash())
 
     return {
         "stocks": portfolio.get_portfolio(),

@@ -149,6 +149,19 @@ async function saveSubmission(client, email, code, submissionName, submissionId)
       }
 }
 
+async function updateTransactionHistory(client, user_id, submissionId, portfolioValue, date){
+  try{
+    var db = client.db("algorithmic_trading").collection("users");
+    let submissionString = `submissions.${submissionId}.portfolioValue`
+    db.updateOne(
+      { _id: ObjectId(user_id) },
+      {$push: {[submissionString]: {date: date, value: portfolioValue}}}
+    );
+  } catch(e) {
+    console.log(e);
+  }
+}
+
 module.exports = {
   connect,
   createUser,
@@ -159,5 +172,6 @@ module.exports = {
   setStandardAndPoors,
   getStandardAndPoors,
   saveCode,
-  saveSubmission
+  saveSubmission,
+  updateTransactionHistory
 };

@@ -9,7 +9,8 @@ const {
   getSubmissions,
   getStandardAndPoors,
   saveCode,
-  saveSubmission
+  saveSubmission,
+  updateTransactionHistory
 } = require("./dbController");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -118,6 +119,21 @@ app.post("/login", async function async(req, res) {
   }
 });
 
+app.post('/updateUserPortfolio', async function (req, res) {
+  try{
+    console.log(req.body)
+    let portfolioValue = req.body.cash;
+    for(let key in req.body.portfolio){ 
+      portfolioValue += req.body.portfolio[key][0]*req.body.portfolio[key][1];
+    }
+    let date = new Date();
+    updateTransactionHistory(client, req.body.user_id, req.body.submission_id, 
+      portfolioValue, date.toISOString().substr(0, 10));
+  } catch(e) {
+    console.log(e);
+  }
+})
+
 app.use((req, res, next) => {
   if (!req.session || !req.session.email) {
     res.status(404).json({
@@ -129,8 +145,7 @@ app.use((req, res, next) => {
 });
 
 // All routes after this will be executed only if user is logged in.
-
-app.post("/newSubmission", async function async(req, res) {
+app.post("/newSubmission", async function (req, res) {
   try {
     const submissionId = await createNewSubmission(client, req.session.id);
     console.log(submissionId);
