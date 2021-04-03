@@ -51,7 +51,7 @@ function executeLambdas(client) {
           var params = {
             FunctionName: "run-code",
             Payload: JSON.stringify(payload),
-            InvocationType: "RequestResponse",
+            InvocationType: "Event",
           };
           lambda.invoke(params, function (err, data) {
             if (err) {

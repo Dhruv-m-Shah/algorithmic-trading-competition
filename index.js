@@ -10,7 +10,8 @@ const {
   getStandardAndPoors,
   saveCode,
   saveSubmission,
-  updateTransactionHistory
+  updateTransactionHistory,
+  deleteSubmission
 } = require("./dbController");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -223,7 +224,19 @@ app.post("/save", async function(req, res) {
     res.status(500).json({
       message: "could not save submission"
     })
-
   }
-})
+});
 
+app.post("/deleteSubmission", async function (req, res) {
+  try{
+    await deleteSubmission(client, req.session.email, req.body.submissionId);
+    res.status(200).json({
+      message: "successfully delete submission"
+    });
+  } catch(e) {
+    console.log(e);
+    res.status(500).json({
+      message: "could not delete submission"
+    });
+  }
+});

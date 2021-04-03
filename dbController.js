@@ -30,6 +30,7 @@ async function createUser(client, email, hashPassword, name) {
       email: email,
       hashPassword: hashPassword,
       name: name,
+      submissions: {}
     });
   } catch (e) {
     throw e;
@@ -159,6 +160,20 @@ async function updateTransactionHistory(client, user_id, submissionId, portfolio
     );
   } catch(e) {
     console.log(e);
+    throw(e);
+  }
+}
+
+async function deleteSubmission(client, email, submissionId) {
+  try{
+    console.log(submissionId);
+    var db = client.db("algorithmic_trading").collection("users");
+    let submissionString = `submissions.${submissionId}`
+    db.updateOne({email: email}, 
+    { $unset:  {[submissionString] : 1} });
+  } catch(e) {
+    console.log(e);
+    throw (e);
   }
 }
 
@@ -173,5 +188,6 @@ module.exports = {
   getStandardAndPoors,
   saveCode,
   saveSubmission,
-  updateTransactionHistory
+  updateTransactionHistory,
+  deleteSubmission
 };
