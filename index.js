@@ -11,7 +11,8 @@ const {
   saveCode,
   saveSubmission,
   updateTransactionHistory,
-  deleteSubmission
+  deleteSubmission,
+  verifyUser
 } = require("./dbController");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -98,6 +99,9 @@ app.post("/login", async function async(req, res) {
     if (!user) {
       res.status(404).json({ message: "incorrect email or password" });
       return;
+    } else if(!user.verified){
+      res.status(401).json({message: "please verify account"});
+      return;
     }
     result = await bcrypt.compare(req.body.password, user.hashPassword);
     if (!result) {
@@ -133,9 +137,21 @@ app.post('/updateUserPortfolio', async function (req, res) {
   } catch(e) {
     console.log(e);
   }
-})
+});
+
+app.get('/verifyEmail/:id', async function(req, res) {
+  try{
+    const id = req.params.id;
+    await verifyUser(client, id);
+  } catch(e) {
+    res.status(500).json({
+      "message": "Could not verify user"
+    })
+  }
+});
 
 app.use((req, res, next) => {
+  console.log(req.params);
   if (!req.session || !req.session.email) {
     res.status(404).json({
       message: "loggin first.",

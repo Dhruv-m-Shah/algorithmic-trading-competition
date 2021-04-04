@@ -2,6 +2,9 @@ const { MongoClient } = require("mongodb");
 var ObjectId = require("mongodb").ObjectID;
 const { v4: uuidv4 } = require("uuid");
 
+const {
+  sendMail
+} = require("./mailer");
 async function connect() {
   /**
    * Connection URI. Update <username>, <password>, and <your-cluster-url> to reflect your cluster.
@@ -30,8 +33,10 @@ async function createUser(client, email, hashPassword, name) {
       email: email,
       hashPassword: hashPassword,
       name: name,
+      verified: false,
       submissions: {}
     });
+    sendMail({id: res.ops[0]._id, email: email});
   } catch (e) {
     throw e;
   }
@@ -166,7 +171,6 @@ async function updateTransactionHistory(client, user_id, submissionId, portfolio
 
 async function deleteSubmission(client, email, submissionId) {
   try{
-    console.log(submissionId);
     var db = client.db("algorithmic_trading").collection("users");
     let submissionString = `submissions.${submissionId}`
     db.updateOne({email: email}, 
@@ -174,6 +178,16 @@ async function deleteSubmission(client, email, submissionId) {
   } catch(e) {
     console.log(e);
     throw (e);
+  }
+}
+
+async function verifyUser(client, id) {
+  try {
+    var db = client.db("algorithmic_trading").collection("users");
+    db.updateOne({_id: ObjectId(id)},
+    { $set: { verified: true } });
+  } catch(e) {
+    throw(e);
   }
 }
 
@@ -189,5 +203,6 @@ module.exports = {
   saveCode,
   saveSubmission,
   updateTransactionHistory,
-  deleteSubmission
+  deleteSubmission,
+  verifyUser
 };
