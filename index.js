@@ -67,8 +67,8 @@ app.use(
     saveUninitialized: true,
     proxy: true,
     cookie: {
-      secure: false,
-      httpOnly: false,
+      secure: true,
+      httpOnly: true,
       sameSite: "none",
       maxAge: 1000 * 60 * 60, // 1 hour.
     },
