@@ -19,7 +19,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const session = require("express-session");
 const redis = require("redis");
-const redisClient = redis.createClient();
+const redisClient = redis.createClient(process.env.REDISCLOUD_URL, {no_ready_check: true});
 const redisStore = require("connect-redis")(session);
 const { executeLambdas } = require("./cron");
 const rateLimit = require("express-rate-limit");
@@ -30,12 +30,13 @@ async function getClient() {
   client = await connect();
   executeLambdas(client);
 }
+
 getClient();
 
 var app = express();
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: process.env.BASE_ENDPOINT,
     credentials: true,
   })
 );
@@ -69,8 +70,6 @@ app.use(
       maxAge: 1000 * 60 * 60, // 1 hour
     },
     store: new redisStore({
-      host: "localhost",
-      port: 6379,
       client: redisClient,
       ttl: 60 * 60,
     }), // 1 hour
@@ -165,10 +164,7 @@ app.get('/verifyEmail/:id', async function(req, res) {
 });
 
 app.use((req, res, next) => {
-  console.log(req.params);
-  console.log(req.session);
   if (!req.session || !req.session.email) {
-    console.log("TEST")
     res.status(404).json({
       message: "loggin first.",
     });
