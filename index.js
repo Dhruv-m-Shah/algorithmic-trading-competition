@@ -68,7 +68,7 @@ app.use(
     cookie: {
       secure: false,
       httpOnly: false,
-      maxAge: 1000 * 60 * 60, // 1 hour
+      maxAge: 1000 * 60 * 60, // 1 hour.
     },
     store: new redisStore({
       client: redisClient,
