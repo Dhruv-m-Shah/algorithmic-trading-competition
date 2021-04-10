@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const bcrypt = require("bcrypt");
+var helmet = require("helmet");
 const {
   connect,
   createUser,
@@ -21,6 +22,7 @@ const redis = require("redis");
 const redisClient = redis.createClient();
 const redisStore = require("connect-redis")(session);
 const { executeLambdas } = require("./cron");
+const rateLimit = require("express-rate-limit");
 // Connect to mongodb database
 let client;
 
@@ -45,6 +47,17 @@ app.use(
 );
 
 app.use(express.json());
+
+// Helmet is used to protect app from well known web vulnerabilities.
+app.use(helmet());
+
+const limiter = rateLimit({
+  windowMs: 15*60*1000, // 15 minutes
+  max: 305 // limit each IP to 305 requests per 15 minutes.
+});
+
+app.use(limiter);
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -114,6 +127,7 @@ app.post("/login", async function async(req, res) {
     console.log(user._id);
     sess.id = user._id;
     sess.email = email;
+    console.log(req.session);
     res.status(200).json({
       message: "logged in",
     });
@@ -152,7 +166,9 @@ app.get('/verifyEmail/:id', async function(req, res) {
 
 app.use((req, res, next) => {
   console.log(req.params);
+  console.log(req.session);
   if (!req.session || !req.session.email) {
+    console.log("TEST")
     res.status(404).json({
       message: "loggin first.",
     });
