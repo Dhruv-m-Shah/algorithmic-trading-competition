@@ -151,6 +151,9 @@ app.post('/updateUserPortfolio', async function (req, res) {
     updateTransactionHistory(client, req.body.user_id, req.body.submission_id, 
       portfolioValue, date.toISOString().substr(0, 10));
   } catch(e) {
+    res.status(500).json({
+      "message": "server error"
+    });
     console.log(e);
   }
 });
