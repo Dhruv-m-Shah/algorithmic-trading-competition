@@ -33,7 +33,7 @@ function updateStandardStock(client) {
 
 function executeLambdas(client) {
   cron.schedule(
-    "00 16 22 * * *",
+    "00 16 01 * * *",
     async () => {
       // Run cron job everyday at 4:30 EST.
       updateStandardStock(client);
