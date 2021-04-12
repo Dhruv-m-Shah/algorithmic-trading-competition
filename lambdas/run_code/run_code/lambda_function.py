@@ -1,10 +1,7 @@
 import json
 import yfinance as yf
-from dotenv import load_dotenv
-load_dotenv()
 
-
-from .requests import store_new_info
+from helper import store_new_info
 
 
 class Portfolio:

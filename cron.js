@@ -20,7 +20,6 @@ function updateStandardStock(client) {
       if (err) {
         console.log(err);
       } else {
-        console.log(data.Payload);
         setStandardAndPoors(
           client,
           JSON.parse(data.Payload)["standardAndPoors100d"]
@@ -34,13 +33,12 @@ function updateStandardStock(client) {
 
 function executeLambdas(client) {
   cron.schedule(
-    "00 33 15 * * *",
+    "00 36 21 * * *",
     async () => {
       // Run cron job everyday at 4:30 EST.
       updateStandardStock(client);
       const cursor = await getCursor(client);
       await cursor.forEach(async (doc) => {
-        console.log(doc);
         for (const submission in doc["submissions"]) {
           vals = doc["submissions"][submission];
           payload = {

@@ -142,7 +142,7 @@ app.post("/login", async function async(req, res) {
 
 app.post('/updateUserPortfolio', async function (req, res) {
   try{
-    console.log(req.body)
+    console.log(req.body);
     let portfolioValue = req.body.cash;
     for(let key in req.body.portfolio){ 
       portfolioValue += req.body.portfolio[key][0]*req.body.portfolio[key][1];

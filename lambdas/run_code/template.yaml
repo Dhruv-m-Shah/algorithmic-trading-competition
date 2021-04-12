@@ -9,6 +9,7 @@ Resources:
         Variables:
           DB_NAME: algorithmic_trading
           DB_PASSWORD: JcC7mim4ORK3fZ5v
+          BASE_ENDPOINT:  https://algo-trading-comp.herokuapp.com
       Handler: lambda_function.lambda_handler
       Runtime: python3.8
       CodeUri: ./run_code/
@@ -17,3 +18,6 @@ Resources:
       MemorySize: 128
       Timeout: 3
       Role: 'arn:aws:iam::787236112239:role/service-role/run_code-role-7qm73sq9'
+      Layers:
+        - "arn:aws:lambda:us-east-1:787236112239:layer:yfinance:4"
+        - "arn:aws:lambda:us-east-1:770693421928:layer:Klayers-python38-pandas:30"
