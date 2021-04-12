@@ -164,7 +164,7 @@ async function updateTransactionHistory(client, user_id, submissionId, portfolio
     await db.updateOne(
       { _id: ObjectId(user_id) },
       {$push: {[submissionStringPort]: {date: date, value: portfolioValue}},
-      $set: {[submissionStringCash]: cash, [submissionStringStock]: stockObj },
+      $set: {[submissionStringCash]: cash, [submissionStringStock]: stockObj},
       }
     );
   } catch(e) {
