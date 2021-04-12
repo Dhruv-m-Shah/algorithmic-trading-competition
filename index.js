@@ -148,8 +148,9 @@ app.post('/updateUserPortfolio', async function (req, res) {
       portfolioValue += req.body.portfolio[key][0]*req.body.portfolio[key][1];
     }
     let date = new Date();
+    console.log(req.body.cash);
     await updateTransactionHistory(client, req.body.user_id, req.body.submission_id, 
-      portfolioValue, cash, date.toISOString().substr(0, 10));
+      portfolioValue, req.body.cash, date.toISOString().substr(0, 10));
     res.status(200).json({
       "message": "updated submission"
     });
