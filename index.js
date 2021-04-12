@@ -148,8 +148,11 @@ app.post('/updateUserPortfolio', async function (req, res) {
       portfolioValue += req.body.portfolio[key][0]*req.body.portfolio[key][1];
     }
     let date = new Date();
-    updateTransactionHistory(client, req.body.user_id, req.body.submission_id, 
+    await updateTransactionHistory(client, req.body.user_id, req.body.submission_id, 
       portfolioValue, date.toISOString().substr(0, 10));
+    res.status(200).json({
+      "message": "updated submission"
+    });
   } catch(e) {
     res.status(500).json({
       "message": "server error"
