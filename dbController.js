@@ -155,13 +155,18 @@ async function saveSubmission(client, email, code, submissionName, submissionId)
       }
 }
 
-async function updateTransactionHistory(client, user_id, submissionId, portfolioValue, date){
+async function updateTransactionHistory(client, user_id, submissionId, portfolioValue, cash, date){
   try{
     var db = client.db("algorithmic_trading").collection("users");
-    let submissionString = `submissions.${submissionId}.portfolioValue`
+    let submissionStringPort = `submissions.${submissionId}.portfolioValue`;
+    let submissionStringCash = `submissions.${submissionId}.cash`;
     db.updateOne(
       { _id: ObjectId(user_id) },
-      {$push: {[submissionString]: {date: date, value: portfolioValue}}}
+      {$push: {[submissionStringPort]: {date: date, value: portfolioValue}}}
+    );
+    db.updateOne(
+      { _id: ObjectId(user_id) },
+      {[submissionStringCash]: cash}
     );
   } catch(e) {
     console.log(e);
