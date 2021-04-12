@@ -147,7 +147,7 @@ app.post('/updateUserPortfolio', async function (req, res) {
     stockObj = {};
     for(let key in req.body.portfolio){ 
       portfolioValue += req.body.portfolio[key][0]*req.body.portfolio[key][1];
-      stockObj[req.body.portfolio[key]] = {
+      stockObj[key] = {
         'shares': req.body.portfolio[key][0],
         'price': req.body.portfolio[key][1]
       }
