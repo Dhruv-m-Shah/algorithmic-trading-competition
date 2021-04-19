@@ -3,10 +3,11 @@ var AWS = require("aws-sdk");
 const { connect, getCursor, setStandardAndPoors } = require("./dbController");
 AWS.config.region = "us-east-1";
 AWS.config.update({
-  "accessKeyId": process.env.AWS_ACCESS_KEY_ID,
-  "secretAccessKey": process.env.AWS_SECRET_KEY_ID,
-  "region": "us-east-1"
-})
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ID,
+  region: "us-east-1"
+});
+
 var lambda = new AWS.Lambda();
 
 function updateStandardStock(client) {
@@ -38,7 +39,7 @@ function updateStandardStock(client) {
 
 function executeLambdas(client) {
   cron.schedule(
-    "00 48 20 * * *",
+    "00 32 21 * * *",
     async () => {
       // Run cron job everyday at 4:30 EST.
       console.log("RAN");
