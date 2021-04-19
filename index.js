@@ -178,6 +178,17 @@ app.get('/verifyEmail/:id', async function(req, res) {
   }
 });
 
+app.use((req, res, next) => {
+  if (!req.session || !req.session.email) {
+    res.status(403).json({
+      message: "loggin first.",
+    });
+    return;
+  }
+  next();
+});
+
+
 app.get("/checkSession", async function (req, res) {
   try{
     res.status(200).json({
@@ -190,17 +201,6 @@ app.get("/checkSession", async function (req, res) {
     });
   }
 });
-
-app.use((req, res, next) => {
-  if (!req.session || !req.session.email) {
-    res.status(403).json({
-      message: "loggin first.",
-    });
-    return;
-  }
-  next();
-});
-
 
 
 // All routes after this will be executed only if user is logged in.
