@@ -2,6 +2,11 @@ const cron = require("node-cron");
 var AWS = require("aws-sdk");
 const { connect, getCursor, setStandardAndPoors } = require("./dbController");
 AWS.config.region = "us-east-1";
+AWS.config.update({
+  "accessKeyId": process.env.AWS_ACCESS_KEY_ID,
+  "secretAccessKey": process.env.AWS_SECRET_KEY_ID,
+  "region": "us-east-1"
+})
 var lambda = new AWS.Lambda();
 
 function updateStandardStock(client) {
