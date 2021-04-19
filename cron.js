@@ -33,7 +33,7 @@ function updateStandardStock(client) {
 
 function executeLambdas(client) {
   cron.schedule(
-    "00 28 20 * * *",
+    "00 32 20 * * *",
     async () => {
       // Run cron job everyday at 4:30 EST.
       console.log("RAN");
