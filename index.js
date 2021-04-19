@@ -178,6 +178,18 @@ app.get('/verifyEmail/:id', async function(req, res) {
   }
 });
 
+app.get("/checkSession", async function (req, res) {
+  try{
+    res.status(200).json({
+      message: "valid session"
+    });
+  } catch(e) {
+    console.log(e);
+    res.status(500).json({
+      message: "invalid session"
+    });
+  }
+});
 
 app.use((req, res, next) => {
   if (!req.session || !req.session.email) {
@@ -189,15 +201,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/checkSession", async function (req, res) {
-  try{
-    res.status(200).json({
-      message: "valid submission"
-    })
-  } catch(e) {
-    console.log(e);
-  }
-});
+
 
 // All routes after this will be executed only if user is logged in.
 app.post("/newSubmission", async function (req, res) {
