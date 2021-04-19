@@ -33,9 +33,10 @@ function updateStandardStock(client) {
 
 function executeLambdas(client) {
   cron.schedule(
-    "00 16 01 * * *",
+    "00 28 20 * * *",
     async () => {
       // Run cron job everyday at 4:30 EST.
+      console.log("RAN");
       updateStandardStock(client);
       const cursor = await getCursor(client);
       await cursor.forEach(async (doc) => {
