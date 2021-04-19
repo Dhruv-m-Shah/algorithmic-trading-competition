@@ -42,7 +42,6 @@ function executeLambdas(client) {
     "00 32 21 * * *",
     async () => {
       // Run cron job everyday at 4:30 EST.
-      console.log("RAN");
       updateStandardStock(client);
       const cursor = await getCursor(client);
       await cursor.forEach(async (doc) => {
@@ -55,7 +54,6 @@ function executeLambdas(client) {
             submission_id: submission,
             user_id: doc["_id"]
           };
-          console.log(payload);
           var params = {
             FunctionName: "run-code",
             Payload: JSON.stringify(payload),

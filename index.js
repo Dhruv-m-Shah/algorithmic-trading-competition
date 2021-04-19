@@ -145,8 +145,6 @@ app.post('/updateUserPortfolio', async function (req, res) {
     console.log(req.body);
     let portfolioValue = req.body.cash;
     stockObj = {};
-    console.log("TEST")
-    console.log(req.body.cash);
     for(let key in req.body.portfolio){ 
       portfolioValue += req.body.portfolio[key][0]*req.body.portfolio[key][1];
       stockObj[key] = {
@@ -180,14 +178,25 @@ app.get('/verifyEmail/:id', async function(req, res) {
   }
 });
 
+
 app.use((req, res, next) => {
   if (!req.session || !req.session.email) {
-    res.status(404).json({
+    res.status(403).json({
       message: "loggin first.",
     });
     return;
   }
   next();
+});
+
+app.get("/checkSession", async function (req, res) {
+  try{
+    res.status(200).json({
+      message: "valid submission"
+    })
+  } catch(e) {
+    console.log(e);
+  }
 });
 
 // All routes after this will be executed only if user is logged in.
@@ -199,7 +208,13 @@ app.post("/newSubmission", async function (req, res) {
       message: "created new submission",
       submissionId: submissionId,
     });
-  } catch (e) {}
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      message: "Server had an error",
+      submissionId: submissionId,
+    });
+  }
 });
 
 app.get("/getSubmissions", async function (req, res) {
