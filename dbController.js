@@ -68,7 +68,7 @@ async function createNewSubmission(client, email, name) {
             transactionHistory: [],
             name: name,
             portfolioValue: [],
-            dateCreated: new Date(1)
+            dateCreated: Date.now()
           },
         },
       }
