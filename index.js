@@ -172,6 +172,7 @@ app.get('/verifyEmail/:id', async function(req, res) {
   try{
     const id = req.params.id;
     await verifyUser(client, id);
+    res.redirect(`${process.env.BASE_ENDPOINT}/login`);
   } catch(e) {
     res.status(500).json({
       "message": "Could not verify user"
