@@ -132,6 +132,7 @@ app.post("/login", async function async(req, res) {
     console.log(req.session);
     res.status(200).json({
       message: "logged in",
+      userId: user._id
     });
   } catch (e) {
     res.status(500).json({
