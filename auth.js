@@ -8,7 +8,7 @@ async function validateCaptcha(token) {
       method: "POST",
     }
   );
-  console.log(response.json());
+  console.log(await response.json());
 
   return true;
 }

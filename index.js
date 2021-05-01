@@ -111,7 +111,7 @@ app.post("/register", async function async(req, res) {
 
 app.post("/login", async function async(req, res) {
   try {
-    if(!validateCaptcha(req.body.token)) {
+    if(! await validateCaptcha(req.body.token)) {
       res.status(404).json({message: "Could not validate Captcha"})
     }
     user = await getUserByEmail(client, req.body.email);
