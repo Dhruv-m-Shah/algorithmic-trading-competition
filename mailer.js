@@ -25,7 +25,6 @@ async function sendEmail(mailObj) {
         to: mailObj.email, // list of receivers
         subject: "Verify bonanza account", // Subject line
         text: `${process.env.BASE_ENDPOINT}/verifyEmail/${mailObj.id}`, // plain text body
-        html: "<b>Hello world?</b>", // html body
       });
       
       console.log("Message sent: %s", info.messageId);
