@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const bcrypt = require("bcrypt");
 var helmet = require("helmet");
+const {validateCaptcha} = require('./auth.js');
 const {
   connect,
   createUser,
@@ -110,6 +111,9 @@ app.post("/register", async function async(req, res) {
 
 app.post("/login", async function async(req, res) {
   try {
+    if(!validateCaptcha(req.body.token)) {
+      res.status(404).json({message: "Could not validate Captcha"})
+    }
     user = await getUserByEmail(client, req.body.email);
     if (!user) {
       res.status(404).json({ message: "incorrect email or password" });
