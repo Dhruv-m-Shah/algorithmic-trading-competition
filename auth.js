@@ -1,3 +1,5 @@
+const fetch = require('node-fetch');
+
 async function validateCaptcha(token) {
   const response = await fetch(
     `https://www.google.com/recaptcha/api/siteverify?
