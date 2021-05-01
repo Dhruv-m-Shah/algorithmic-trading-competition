@@ -1,6 +1,5 @@
 const nodemailer = require("nodemailer");
 
-
 // sendEmail takes in a mailObj that contains the following fields:
 //  1. mailList  (an Array of emails)
 //  2. Title (A string which contains the title of the email)
@@ -19,14 +18,14 @@ async function sendEmail(mailObj) {
               rejectUnauthorized: false
           }
       });
-
+      
       // send mail with defined transport object
       let info = await transporter.sendMail({
-          from: process.env.EMAIL, // sender address
-          to: mailObj.mailList, // list of receivers
-          subject: mailObj.title, // Subject line
-          text: "", // plain text body
-          html: mailObj.body, // (we need to make a custom mail template, this can be done later.)
+        from: process.env.EMAIL, // sender address
+        to: mailObj.email, // list of receivers
+        subject: "Verify bonanza account", // Subject line
+        text: `${process.env.BASE_ENDPOINT}/verifyEmail/${mailObj.id}`, // plain text body
+        html: "<b>Hello world?</b>", // html body
       });
       
       console.log("Message sent: %s", info.messageId);
@@ -39,4 +38,4 @@ async function sendEmail(mailObj) {
   }
 }
 
-module.exports = {sendEmail, generateHtml};
+module.exports = {sendEmail};

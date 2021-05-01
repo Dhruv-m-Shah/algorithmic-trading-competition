@@ -3,7 +3,7 @@ var ObjectId = require("mongodb").ObjectID;
 const { v4: uuidv4 } = require("uuid");
 
 const {
-  sendMail
+  sendEmail
 } = require("./mailer");
 async function connect() {
   /**
@@ -36,7 +36,7 @@ async function createUser(client, email, hashPassword, name) {
       verified: false,
       submissions: {}
     });
-    sendMail({id: res.ops[0]._id, email: email});
+    sendEmail({id: res.ops[0]._id, email: email});
   } catch (e) {
     throw e;
   }
