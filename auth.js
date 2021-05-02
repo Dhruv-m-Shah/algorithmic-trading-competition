@@ -8,7 +8,6 @@ async function validateCaptcha(token) {
     secret=${process.env.CAPTCHA_SECRET}&response=${token}`,
     {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" }
     }
   );
   console.log(await response.json());
