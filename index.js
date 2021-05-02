@@ -109,11 +109,14 @@ app.post("/register", async function async(req, res) {
   }
 });
 
+// TODO: Implement password checks.
 app.post("/login", async function async(req, res) {
   try {
+    // Check for verify captcha token with google.
     if(! await validateCaptcha(req.body.captchaToken)) {
       res.status(404).json({message: "Could not validate Captcha"})
     }
+    // Check if user exists.
     user = await getUserByEmail(client, req.body.email);
     if (!user) {
       res.status(404).json({ message: "incorrect email or password" });
