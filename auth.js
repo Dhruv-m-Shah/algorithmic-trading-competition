@@ -9,9 +9,8 @@ async function validateCaptcha(token) {
       method: "POST",
     }
   );
-  console.log(await response.json());
-
-  return true;
+  const res = await response.json()['success'];
+  return res;
 }
 
 module.exports = {validateCaptcha}
