@@ -114,14 +114,17 @@ app.post("/login", async function async(req, res) {
   try {
     // Check for verify captcha token with google.
     if(! await validateCaptcha(req.body.captchaToken)) {
-      res.status(404).json({message: "Could not validate Captcha"})
+      res.status(404).json({message: "Could not validate Captcha"});
+      return;
     }
+    
     // Check if user exists.
     user = await getUserByEmail(client, req.body.email);
     if (!user) {
       res.status(404).json({ message: "incorrect email or password" });
       return;
     } else if(!user.verified){
+      // check if user has verified email
       res.status(401).json({message: "please verify account"});
       return;
     }
