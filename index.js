@@ -163,7 +163,10 @@ app.post('/updateUserPortfolio', async function (req, res) {
         'price': req.body.portfolio[key][1]
       }
     }
+    
     let date = new Date();
+    // Ensure EST
+    date.toLocaleString('en-US', {timeZone: 'America/New_York'});
     console.log(req.body.cash);
     await updateTransactionHistory(client, req.body.user_id, req.body.submission_id, 
       portfolioValue, req.body.cash, stockObj, date.toISOString().substr(0, 10));
