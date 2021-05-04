@@ -166,7 +166,7 @@ app.post('/updateUserPortfolio', async function (req, res) {
     
     let date = new Date();
     // Ensure EST
-    date.toLocaleString('en-US', {timeZone: 'America/New_York'});
+    date = date.toLocaleString('en-US', {timeZone: 'America/New_York'});
     console.log(date);
     console.log(req.body.cash);
     await updateTransactionHistory(client, req.body.user_id, req.body.submission_id, 
