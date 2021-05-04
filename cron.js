@@ -22,6 +22,7 @@ function updateStandardStock(client) {
       Payload: JSON.stringify(payload),
       InvocationType: "RequestResponse",
     };
+    
     lambda.invoke(params, function (err, data) {
       if (err) {
         console.log(err);
@@ -39,7 +40,7 @@ function updateStandardStock(client) {
 
 function executeLambdas(client) {
   cron.schedule(
-    "00 54 00 * * *",
+    "00 30 16 * * *",
     async () => {
       // Run cron job everyday at 4:30 EST.
       updateStandardStock(client);
@@ -54,6 +55,7 @@ function executeLambdas(client) {
             submission_id: submission,
             user_id: doc["_id"]
           };
+          console.log(payload)
           var params = {
             FunctionName: "run-code",
             Payload: JSON.stringify(payload),
