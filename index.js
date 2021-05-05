@@ -55,6 +55,9 @@ app.use(express.json());
 // Helmet is used to protect app from well known web vulnerabilities.
 app.use(helmet());
 
+// Middleware to check captcha token.
+app.use("/", checkCaptcha);
+
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 305, // limit each IP to 305 requests per 15 minutes.
@@ -233,8 +236,6 @@ async function checkCaptcha(req, res, next) {
     });
   }
 }
-
-app.use("/", checkCaptcha);
 
 app.get("/checkSession", async function (req, res) {
   try {
