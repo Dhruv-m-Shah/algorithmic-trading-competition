@@ -83,7 +83,6 @@ def lambda_handler(event, context):
     except Exception as e:
         error = e
     
-    print(portfolio.get_portfolio())
     store_new_info(user_id, submission_id, portfolio.get_portfolio(), portfolio.get_cash())
 
     return {
