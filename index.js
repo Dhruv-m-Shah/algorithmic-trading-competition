@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const bcrypt = require("bcrypt");
 var helmet = require("helmet");
-const {validateCaptcha} = require('./auth.js');
+const { validateCaptcha } = require("./auth.js");
 const {
   connect,
   createUser,
@@ -14,13 +14,15 @@ const {
   saveSubmission,
   updateTransactionHistory,
   deleteSubmission,
-  verifyUser
+  verifyUser,
 } = require("./dbController");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const session = require("express-session");
 const redis = require("redis");
-const redisClient = redis.createClient(process.env.REDISCLOUD_URL, {no_ready_check: true});
+const redisClient = redis.createClient(process.env.REDISCLOUD_URL, {
+  no_ready_check: true,
+});
 const redisStore = require("connect-redis")(session);
 const { executeLambdas } = require("./cron");
 const rateLimit = require("express-rate-limit");
@@ -54,12 +56,12 @@ app.use(express.json());
 app.use(helmet());
 
 const limiter = rateLimit({
-  windowMs: 15*60*1000, // 15 minutes
-  max: 305 // limit each IP to 305 requests per 15 minutes.
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 305, // limit each IP to 305 requests per 15 minutes.
 });
 
 app.use(limiter);
-app.enable('trust proxy');
+app.enable("trust proxy");
 
 app.use(
   session({
@@ -112,20 +114,14 @@ app.post("/register", async function async(req, res) {
 // TODO: Implement password checks.
 app.post("/login", async function async(req, res) {
   try {
-    // Check for verify captcha token with google.
-    if(! await validateCaptcha(req.body.captchaToken)) {
-      res.status(404).json({message: "Could not validate Captcha"});
-      return;
-    }
-    
     // Check if user exists.
     user = await getUserByEmail(client, req.body.email);
     if (!user) {
       res.status(404).json({ message: "incorrect email or password" });
       return;
-    } else if(!user.verified){
+    } else if (!user.verified) {
       // check if user has verified email
-      res.status(401).json({message: "please verify account"});
+      res.status(401).json({ message: "please verify account" });
       return;
     }
     result = await bcrypt.compare(req.body.password, user.hashPassword);
@@ -142,7 +138,7 @@ app.post("/login", async function async(req, res) {
     console.log(req.session);
     res.status(200).json({
       message: "logged in",
-      userId: user._id
+      userId: user._id,
     });
   } catch (e) {
     res.status(500).json({
@@ -151,46 +147,58 @@ app.post("/login", async function async(req, res) {
   }
 });
 
-app.post('/updateUserPortfolio', async function (req, res) {
-  try{
+app.post("/updateUserPortfolio", async function (req, res) {
+  try {
     console.log(req.body);
     let portfolioValue = req.body.cash;
     stockObj = {};
-    for(let key in req.body.portfolio){ 
-      portfolioValue += req.body.portfolio[key][0]*req.body.portfolio[key][1];
+    for (let key in req.body.portfolio) {
+      portfolioValue += req.body.portfolio[key][0] * req.body.portfolio[key][1];
       stockObj[key] = {
-        'shares': req.body.portfolio[key][0],
-        'price': req.body.portfolio[key][1]
-      }
+        shares: req.body.portfolio[key][0],
+        price: req.body.portfolio[key][1],
+      };
     }
-    
+
     let date = new Date();
     // Ensure EST
-    date = date.toLocaleString('en-US', {timeZone: 'America/New_York', month: '2-digit', day: '2-digit', year: 'numeric'});
+    date = date.toLocaleString("en-US", {
+      timeZone: "America/New_York",
+      month: "2-digit",
+      day: "2-digit",
+      year: "numeric",
+    });
     console.log(date);
     console.log(req.body.cash);
-    await updateTransactionHistory(client, req.body.user_id, req.body.submission_id, 
-      portfolioValue, req.body.cash, stockObj, date.substr(0, 10));
+    await updateTransactionHistory(
+      client,
+      req.body.user_id,
+      req.body.submission_id,
+      portfolioValue,
+      req.body.cash,
+      stockObj,
+      date.substr(0, 10)
+    );
     res.status(200).json({
-      "message": "updated submission"
+      message: "updated submission",
     });
-  } catch(e) {
+  } catch (e) {
     res.status(500).json({
-      "message": "server error"
+      message: "server error",
     });
     console.log(e);
   }
 });
 
-app.get('/verifyEmail/:id', async function(req, res) {
-  try{
+app.get("/verifyEmail/:id", async function (req, res) {
+  try {
     const id = req.params.id;
     await verifyUser(client, id);
     res.redirect(`${process.env.BASE_ENDPOINT}/login`);
-  } catch(e) {
+  } catch (e) {
     res.status(500).json({
-      "message": "Could not verify user"
-    })
+      message: "Could not verify user",
+    });
   }
 });
 
@@ -204,20 +212,42 @@ app.use((req, res, next) => {
   next();
 });
 
+// This function first validates captcha token.
+async function checkCaptcha(req, res, next) {
+  try {
+    if (req.path == "/login" || req.path == "/register") {
+      // Check for verify captcha token with google.
+      if (!req.body.captchaToken || !(await validateCaptcha(req.body.captchaToken))) {
+        res.status(404).json({ message: "Could not validate Captcha" });
+        return;
+      } else{
+        next();
+      }
+    }
+    else {
+      next();
+    }
+  } catch (e) {
+    res.status(500).json({
+      message: "server error"
+    });
+  }
+}
+
+app.use("/", checkCaptcha);
 
 app.get("/checkSession", async function (req, res) {
-  try{
+  try {
     res.status(200).json({
-      message: "valid session"
+      message: "valid session",
     });
-  } catch(e) {
+  } catch (e) {
     console.log(e);
     res.status(500).json({
-      message: "invalid session"
+      message: "invalid session",
     });
   }
 });
-
 
 // All routes after this will be executed only if user is logged in.
 app.post("/newSubmission", async function (req, res) {
@@ -254,11 +284,11 @@ app.get("/getSubmissions", async function (req, res) {
 
 // returns last 100 submissions in the s&p 500 index.
 app.get("/standardAndPoors500", async function (req, res) {
-  try{
+  try {
     sAndPData = await getStandardAndPoors(client);
     res.status(200).json({
       sAndPData: sAndPData,
-      message: "got standard and poors data"
+      message: "got standard and poors data",
     });
   } catch (e) {
     console.log(e);
@@ -266,57 +296,72 @@ app.get("/standardAndPoors500", async function (req, res) {
 });
 
 // Creates a new user submission
-app.post("/createNewSubmission", async function(req, res) {
-  try{
-    let submissionId = await createNewSubmission(client, req.session.email, req.body.name);
+app.post("/createNewSubmission", async function (req, res) {
+  try {
+    let submissionId = await createNewSubmission(
+      client,
+      req.session.email,
+      req.body.name
+    );
     res.status(200).json({
       message: "successfully created new submission",
-      submissionId: submissionId
+      submissionId: submissionId,
     });
   } catch (e) {
     res.status(500).json({
-      message: "could not create new submission"
+      message: "could not create new submission",
     });
   }
 });
 
 // Saved user code
-app.post("/saveCode", async function(req, res) {
-  try{
-    await saveCode(client, req.session.email, req.body.code, req.body.submissionId);
+app.post("/saveCode", async function (req, res) {
+  try {
+    await saveCode(
+      client,
+      req.session.email,
+      req.body.code,
+      req.body.submissionId
+    );
     res.status(200).json({
-      message: "successfully saved code"
+      message: "successfully saved code",
     });
   } catch (e) {
     res.status(500).json({
-      message: "could not save code"
+      message: "could not save code",
     });
   }
 });
 
-app.post("/save", async function(req, res) {
-  try{
-    await saveSubmission(client, req.session.email, req.body.code, req.body.submissionName, req.body.submissionId);
+app.post("/save", async function (req, res) {
+  try {
+    await saveSubmission(
+      client,
+      req.session.email,
+      req.body.code,
+      req.body.submissionName,
+      req.body.submissionId
+    );
     res.status(200).json({
-      message: "successfully saved submission"
+      message: "successfully saved submission",
     });
-  } catch(e) {
+  } catch (e) {
     res.status(500).json({
-      message: "could not save submission"
-    })
+      message: "could not save submission",
+    });
   }
 });
 
 app.post("/deleteSubmission", async function (req, res) {
-  try{
+  try {
     await deleteSubmission(client, req.session.email, req.body.submissionId);
     res.status(200).json({
-      message: "successfully delete submission"
+      message: "successfully delete submission",
     });
-  } catch(e) {
+  } catch (e) {
     console.log(e);
     res.status(500).json({
-      message: "could not delete submission"
+      message: "could not delete submission",
     });
   }
 });
