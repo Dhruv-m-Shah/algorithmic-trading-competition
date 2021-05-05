@@ -10,31 +10,41 @@ class Portfolio:
         self.cash = cash
     def buy_stock(self, ticker, amount):
         try:
+            print("TEST")
             stock_ticker = yf.Ticker(ticker)
             todays_data = stock_ticker.history(period='1d')
             price = todays_data["Close"][0]
+            
             if(price*amount > self.cash):
+                print("TEST123")
                 return False
             else:
+                print("TEST456")
                 self.cash -= price*amount
                 if(ticker in self.stocks):
-                    self.stocks[ticker] += amount
+                    
+                    self.stocks[ticker]['shares'] += amount
                 else:
-                    self.stocks[ticker] = amount
+                    print("ABC")
+                    self.stocks[ticker] = {}
+                    self.stocks[ticker]['shares'] = amount
+                    print(self.stocks)
+                print(self.stocks)
         except Exception as e:
             print(e)
             return False
     def sell_stock(self, ticker, amount):
         try:
             stock_ticker = yf.Ticker(ticker)
-            todays_data = ticker.history(period='1d')
+            todays_data = stock_ticker.history(period='1d')
             price = todays_data["Close"][0]
-            if(ticker not in self.stocks or self.stocks[ticker] < amount):
+            if(ticker not in self.stocks or self.stocks[ticker]['shares'] < amount):
                 return False
             else:
                 self.cash += price*amount
-                self.stocks[ticker] -= amount
+                self.stocks[ticker]['shares'] -= amount
         except Exception as e:
+            print(e)
             return False
     def get_cash(self):
         return self.cash
@@ -43,6 +53,7 @@ class Portfolio:
 
 
 def lambda_handler(event, context):
+    print(event)
     # Return last 100 closing prices for s&p500
     if("updateStandardStock" in event):
         # ^GSPC is the ticker name for S&P500
@@ -72,6 +83,7 @@ def lambda_handler(event, context):
     except Exception as e:
         error = e
     
+    print(portfolio.get_portfolio())
     store_new_info(user_id, submission_id, portfolio.get_portfolio(), portfolio.get_cash())
 
     return {
