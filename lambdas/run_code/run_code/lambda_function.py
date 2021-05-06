@@ -10,16 +10,13 @@ class Portfolio:
         self.cash = cash
     def buy_stock(self, ticker, amount):
         try:
-            print("TEST")
             stock_ticker = yf.Ticker(ticker)
             todays_data = stock_ticker.history(period='1d')
             price = todays_data["Close"][0]
             
             if(price*amount > self.cash):
-                print("TEST123")
                 return False
             else:
-                print("TEST456")
                 self.cash -= price*amount
                 if(ticker in self.stocks):
                     
