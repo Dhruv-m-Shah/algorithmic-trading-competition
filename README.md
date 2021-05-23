@@ -1,4 +1,4 @@
-# algorithmic-trading-competition
-A competition where users can write their own scripts and compete with others in algorithmic trading.
+# Bonanza
+Buy and sell stocks with algorithms in a sandboxed environment simulated with real market data.
 
 Visit site here: https://bonanza-app.herokuapp.com/
