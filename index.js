@@ -39,7 +39,7 @@ getClient();
 var app = express();
 app.use(
   cors({
-    origin: process.env.BASE_ENDPOINT,
+    origin: [process.env.BASE_ENDPOINT, process.env.BASE_ENDPOINT_DEPLOYED],
     credentials: true,
   })
 );
